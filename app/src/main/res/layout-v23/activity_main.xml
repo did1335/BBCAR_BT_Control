@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    tools:context=".MainActivity">
+
+        <!--Bluetooth icon (on/off)-->
+        <TableLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:id="@+id/bluetoothIv"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:contentDescription="@string/todo" />
+        </TableLayout>
+
+        <!--bluetooth status-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="@string/rx"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/readBuffer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/read_buffer" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="@string/status"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/bluetoothStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="0.9"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/bluetooth_status" />
+        </LinearLayout>
+
+        <!--bluetooth btn-->
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            >
+        <TableRow>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bluetooth_on"
+            android:id="@+id/scan"
+            style="@style/Base.Widget.AppCompat.Button.Colored"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bluetooth_off"
+            android:id="@+id/off"
+            style="@style/Base.Widget.AppCompat.Button.Colored"
+            />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/PairedBtn"
+                style="@style/Base.Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_paired_devices" />
+
+            <Button
+                android:id="@+id/discover"
+                style="@style/Base.Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/discover_new_devices" />
+        </TableRow>
+        </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/ver_btn"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="@string/version"
+        android:background="#BB1E90FF"
+        style="@style/Base.Widget.AppCompat.Button.Colored"/>
+    </LinearLayout>
+
+    <!--control btn-->
+    <TableLayout
+            android:id="@+id/table2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            >
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="?android:attr/listDivider" />
+
+        <TableRow>
+                <Button
+                    android:id="@+id/btn1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lf"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+
+                <Button
+                    android:id="@+id/btn2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/forward"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+                <Button
+                    android:id="@+id/btn3"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/rf"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+            </TableRow>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <TableRow>
+                <Button
+                    android:id="@+id/btn4"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/left"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+                <Button
+                    android:id="@+id/btn5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/car"
+                    android:textStyle="bold"
+                    android:textSize="9pt"
+                    android:textColor="#FFF"
+                    android:background="@android:color/holo_orange_dark"
+                    style="@style/Base.Widget.AppCompat.Button.Colored"
+                    />
+                <Button
+                    android:id="@+id/btn6"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/right"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+            </TableRow>
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:background="?android:attr/listDivider" />
+
+        <TableRow>
+                <Button
+                    android:id="@+id/btn7"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/lb"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+                <Button
+                    android:id="@+id/btn8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/back"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+                <Button
+                    android:id="@+id/btn9"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/rb"
+                    android:background="@android:drawable/btn_default"
+                    style="@style/Base.Widget.AppCompat.ActionMode"
+                    />
+            </TableRow>
+            <View
+            android:id="@+id/divider4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </TableLayout>
+
+        <!--devices list-->
+
+    <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/devicesListView"
+            android:choiceMode="singleChoice"
+            />
+
+    </LinearLayout>

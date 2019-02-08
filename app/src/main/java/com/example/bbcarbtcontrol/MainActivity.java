@@ -13,14 +13,16 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +31,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.UUID;
 
-
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity{
     // GUI Components
+    private ScrollView scrollView;
     private TextView mBluetoothStatus;
     private TextView mReadBuffer;
     private Button mScanBtn;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView mDevicesListView;
 
     private ImageView mbluetoothIv;
+    private ImageView mremoteIv;
 
     private Handler mHandler; // Our main handler that will receive callback notifications
     private ConnectedThread mConnectedThread; // bluetooth background worker thread to send and receive data
@@ -55,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // 一定要使用序列埠傳輸UUID   "random" unique identifier
     // UUID查詢請參照此網站    http://fecbob.pixnet.net/blog/post/37701100-%5Bandroid%5D-%E8%97%8D%E7%89%99uuid
 
-
-    // #defines for identifying shared types between calling functions
+    // #define for identifying shared types between calling functions
     private final static int REQUEST_ENABLE_BT = 1; // used to identify adding bluetooth names
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
     private final static int CONNECTING_STATUS = 3; // used in bluetooth handler to identify message status
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        scrollView=(ScrollView)this.findViewById(R.id.scrollView2);
         mBluetoothStatus = (TextView)findViewById(R.id.bluetoothStatus);
         mReadBuffer = (TextView) findViewById(R.id.readBuffer);
         mScanBtn = (Button)findViewById(R.id.scan);
@@ -96,12 +98,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         mbluetoothIv = (ImageView)findViewById(R.id.bluetoothIv) ;
+        mremoteIv   =  (ImageView)findViewById(R.id.remoteIV) ;
+        mremoteIv.setImageResource(R.drawable.ic_action_remote);
         mBTArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mBTAdapter = BluetoothAdapter.getDefaultAdapter(); // get a handle on the bluetooth radio
 
         mDevicesListView = (ListView)findViewById(R.id.devicesListView);
         mDevicesListView.setAdapter(mBTArrayAdapter); // assign model to view
         mDevicesListView.setOnItemClickListener(mDeviceClickListener);
+
 
         //設定按鍵五不可被按下
         mbtn5.setEnabled(false);
@@ -129,10 +134,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if(msg.what == CONNECTING_STATUS){
-                    if(msg.arg1 == 1)
+                    if(msg.arg1 == 1){
                         mBluetoothStatus.setText("Connected to Device: " + (String)(msg.obj));
-                    else
+                        showToast("Connected to Device: " + (String)(msg.obj));
+                    }
+                    else {
                         mBluetoothStatus.setText("Connection Failed");
+                        showToast("Connection Failed");
+                    }
                 }
             }
         };
@@ -229,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v){
                     listPairedDevices(v);
+                    setListViewHeight(mDevicesListView);//動態改變ListView高度，使其可顯示所有裝置
                 }
             });
 
@@ -236,16 +246,37 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v){
                     discover(v);
+                    setListViewHeight(mDevicesListView);//動態改變ListView高度，使其可顯示所有裝置
                 }
             });
         }
     }
 
+    //動態設置listview高度的方法(函式格式:setListViewHeight(ListView);)
+    public static void setListViewHeight(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);   //獲得每個子item的視圖
+            listItem.measure(0, 0);   //先判斷寫入的widthMeasureSpec和heightMeasureSpec是否和當前的值相等，如果不等，重新调用onMeasure()
+            totalHeight += listItem.getMeasuredHeight();   //把每個item高度累加
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));   //加上每個item之間的距離
+        listView.setLayoutParams(params);
+    }
+
+
+    //藍牙字元寫入
     private void BTprint(String msg){
         if(mConnectedThread != null) //First check to make sure thread created
             mConnectedThread.write(msg);
     }
 
+    //啟動藍牙
     private void bluetoothOn(View view){
         if (!mBTAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -287,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //關閉藍牙
     private void bluetoothOff(View view){
         mBTAdapter.disable(); // turn off
         mBluetoothStatus.setText("Bluetooth disabled");
@@ -295,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
         mbluetoothIv.setImageResource(R.drawable.ic_action_off);
     }
 
+    //尋找裝置
     private void discover(View view){
         // Check if the device is already discovering
         if(mBTAdapter.isDiscovering()){
@@ -318,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //廣播接收器
     final BroadcastReceiver blReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -331,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //顯示配對裝置
     private void listPairedDevices(View view){
         mPairedDevices = mBTAdapter.getBondedDevices();
         if(mBTAdapter.isEnabled()) {
@@ -346,6 +381,7 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(getApplicationContext(), "Bluetooth not on", Toast.LENGTH_SHORT).show();
     }
 
+    //藍牙適配器
     private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
 
@@ -404,11 +440,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //建立藍牙端口(Socket)
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
         //creates secure outgoing connection with BT device using UUID
     }
 
+    //藍牙socket連線
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -467,13 +505,14 @@ public class MainActivity extends AppCompatActivity {
                 mmSocket.close();
             } catch (IOException e) { }
         }
+
     }
 
 
-
+    //tosat訊息顯示
     private Toast mToastToShow;
     public void showToast(String msg){
-        int toastDurationInMilliSeconds  = 2500; //2500 milliseconds
+        int toastDurationInMilliSeconds  = 2700; //2700 milliseconds
         mToastToShow = Toast.makeText(this,msg,Toast.LENGTH_SHORT);
         //Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
 
@@ -493,6 +532,5 @@ public class MainActivity extends AppCompatActivity {
         mToastToShow.show();
         toastCountDown.start();
     }
-
 
 }
